@@ -59,6 +59,7 @@ rectangle "SmartRoom" {
     usecase "Consulter les signalements reçus" as UC_ViewReports COLOR_ADMIN
     usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports COLOR_ADMIN
     usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats COLOR_ADMIN
+    usecase "Ajouter, modifier ou supprimer\ndes équipements" as UC_ManageEquip COLOR_ADMIN
   }
   Admin --> P_Gest
 
