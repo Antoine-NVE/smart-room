@@ -1,0 +1,43 @@
+@startuml SmartRoom_Sequence_User
+title Créer une réservation simple
+
+actor "Utilisateur (connecté)" as U
+
+participant "Frontend\n(IHM)" as FE
+participant "Backend API" as API
+participant "Service Mail" as MAIL
+database "Base de données" as DB
+
+U -> FE : Ouvre la page de réservation
+activate FE
+
+FE -> API : POST /reservations (données + token)
+activate API
+
+API -> API : Vérifier l'authentification
+activate API #LightGray
+API --> API : Auth OK
+deactivate API
+
+API -> DB : Vérifier disponibilité de la salle\nSELECT ... WHERE date ...
+activate DB
+DB --> API : Disponible / Non disponible
+deactivate DB
+
+API -> DB : INSERT nouvelle réservation
+activate DB
+DB --> API : ID de la réservation
+deactivate DB
+
+API -> MAIL : Envoyer e-mail de confirmation\n(réservation créée)
+activate MAIL
+MAIL --> API : OK
+deactivate MAIL
+
+API --> FE : 201 Created (réservation créée)
+deactivate API
+
+FE --> U : Affiche la confirmation
+deactivate FE
+
+@enduml

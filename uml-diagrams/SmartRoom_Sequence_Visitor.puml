@@ -1,0 +1,26 @@
+@startuml SmartRoom_Sequence_Visitor
+title Consulter la liste des salles
+
+actor "Visiteur" as V
+participant "Frontend\n(IHM)" as FE
+participant "Backend API" as API
+database "Base de données" as DB
+
+V -> FE : Ouvre la page /salles
+activate FE
+
+FE -> API : GET /rooms
+activate API
+
+API -> DB : SELECT * FROM rooms
+activate DB
+DB --> API : Résultats
+deactivate DB
+
+API --> FE : JSON (liste des salles)
+deactivate API
+
+FE --> V : Affiche la liste
+deactivate FE
+
+@enduml

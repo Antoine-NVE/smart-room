@@ -1,0 +1,52 @@
+@startuml SmartRoom_Deployment_Diagram
+title Diagramme de déploiement — Application Docker en production
+
+node "Serveur Physique / VPS\n(Linux)" as Server {
+
+    node "Reverse Proxy\n(Nginx / Traefik)" as Proxy {
+        artifact "Configuration HTTPS"
+    }
+
+    node "Docker Compose" as Compose {
+
+        node "Conteneur frontend\n(Nginx)" as Front {
+            artifact "Bundle React\n(fichiers statiques)"
+        }
+
+        node "Conteneur backend\n(Node.js API)" as Back {
+            artifact "Application Node.js\n(TypeScript compilé)"
+        }
+
+        node "Conteneur PostgresSQL" as Postgres {
+            artifact "Base de données\n(postgres)"
+        }
+
+        node "Conteneur Redis" as Redis {
+            artifact "Cache / Rate limit /\nrevocation tokens"
+        }
+    }
+}
+
+node "SMTP externe\n(OVH / Mailjet / autre)" as SMTP {
+    artifact "Service d’e-mails"
+}
+
+node "Navigateur\nUtilisateur" as Browser {
+    artifact "Client Web"
+}
+
+' Communications externe
+Browser --> Proxy : HTTPS (443)
+
+' Routage interne
+Proxy --> Front : HTTP (port interne)
+Proxy --> Back : HTTP (port interne, /api)
+
+' Accès aux bases
+Back --> Postgres : Connexion Postgres (5432)
+Back --> Redis : Connexion Redis (6379)
+
+' E-mails
+Back --> SMTP : SMTP / API mail
+
+@enduml

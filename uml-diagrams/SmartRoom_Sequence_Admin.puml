@@ -1,0 +1,56 @@
+@startuml SmartRoom_Sequence_Admin
+title Rendre une salle indisponible (avec notifications d'annulation)
+
+actor "Administrateur" as A
+
+participant "Frontend\n(IHM)" as FE
+participant "Backend API" as API
+participant "Service Mail" as MAIL
+database "Base de données" as DB
+
+A -> FE : Choisit une salle\n+ saisit une période d'indisponibilité
+activate FE
+
+FE -> API : POST /rooms/{id}/unavailable\n(dates indicative + token)
+activate API
+
+API -> API : Vérifier authentification + rôle admin
+activate API #LightGray
+API --> API : Auth OK + rôle admin confirmé
+deactivate API
+
+API -> DB : Vérifier existence de la salle
+activate DB
+DB --> API : Salle trouvée
+deactivate DB
+
+API -> DB : Sélectionner toutes les réservations de la salle
+activate DB
+DB --> API : Liste des réservations (R1, R2, ...)
+deactivate DB
+
+API -> DB : DELETE réservations de la salle
+activate DB
+DB --> API : OK
+deactivate DB
+
+' Boucle d'envoi d'e-mails
+loop Pour chaque réservation annulée
+    API -> MAIL : Envoyer e-mail d'annulation\n(destinataire + détails)
+    activate MAIL
+    MAIL --> API : OK
+    deactivate MAIL
+end
+
+API -> DB : UPDATE salle → indisponible\n(dates indicatives)
+activate DB
+DB --> API : OK
+deactivate DB
+
+API --> FE : 200 OK (salle rendue indisponible\n+ utilisateurs notifiés)
+deactivate API
+
+FE --> A : Affiche confirmation
+deactivate FE
+
+@enduml

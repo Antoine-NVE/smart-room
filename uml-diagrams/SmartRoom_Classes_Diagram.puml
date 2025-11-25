@@ -1,0 +1,96 @@
+@startuml SmartRoom_Classes_Diagram
+title Domain Class Diagram — SmartRoom (Recurring Reservations)
+
+' ======= ENTITIES =======
+
+class User {
+    +id: number
+    +email: string
+    +passwordHash: string
+    +role: UserRole <<enum>>
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+class Room {
+    +id: number
+    +name: string
+    +building: string
+    +floor: string
+    +capacity: number
+}
+
+class RoomResource {
+    +id: number
+    +roomId: number
+    +name: string
+    +quantity: number
+}
+
+class Reservation {
+    +id: number
+    +roomId: number
+    +userId: number
+    +startDate: Date
+    +endDate: Date
+    +recurringPatternId: number <<optional>>
+}
+
+class RecurringPattern {
+    +id: number
+    +interval: number
+    +weekDays: string[]
+    +until: Date <<optional>>
+}
+
+class IncidentReport {
+    +id: number
+    +roomId: number
+    +userId: number
+    +message: string
+    +status: IncidentStatus <<enum>>
+    +createdAt: Date
+}
+
+enum IncidentStatus {
+    PENDING
+    IN_PROGRESS
+    RESOLVED
+    CANCELLED
+}
+
+class FavoriteRoom {
+    +id: number
+    +userId: number
+    +roomId: number
+}
+
+class RoomUnavailability {
+    +id: number
+    +roomId: number
+    +from: Date
+    +to: Date
+    +reason: string
+}
+
+' ======= RELATIONSHIPS =======
+
+User "1" --> "0..*" Reservation : makes >
+Room "1" --> "0..*" Reservation : booked in >
+
+Room "1" --> "0..*" RoomResource : has >
+
+User "1" --> "0..*" FavoriteRoom : marks >
+Room "1" --> "0..*" FavoriteRoom : is favorited by >
+
+Room "1" --> "0..*" IncidentReport : has problem >
+User "1" --> "0..*" IncidentReport : reports >
+
+Room "1" --> "0..*" RoomUnavailability : unavailable periods >
+
+Reservation "1" --> "0..1" RecurringPattern : has recurring >
+
+@enduml
