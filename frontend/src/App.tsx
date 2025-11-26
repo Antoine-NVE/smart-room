@@ -6,8 +6,9 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
 
+  // Can be deleted
   useEffect(() => {
-      fetch(import.meta.env.VITE_API_URL).then((res) => {
+    fetch(import.meta.env.VITE_API_URL).then((res) => {
         console.log(res)
       })
     }
