@@ -1,0 +1,27 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.local
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "${FRONTEND_DEV_PORT}:5173"
+      - "${FRONTEND_PREVIEW_PORT}:4173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
+    env_file:
+      - ./backend/.env
+    ports:
+      - "${BACKEND_PORT}:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
