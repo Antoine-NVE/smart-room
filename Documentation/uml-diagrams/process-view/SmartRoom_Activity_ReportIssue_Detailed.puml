@@ -1,0 +1,39 @@
+@startuml SmartRoom_Activity_ReportIssue_Detailed
+title Activité : Signaler un problème
+
+start
+
+:Ouvrir l'application SmartRoom;
+:Utilisateur consulte la liste des salles;
+:Utilisateur sélectionne une salle;
+:Afficher les informations et équipements;
+
+:Utilisateur clique sur "Signaler un problème";
+
+if (Utilisateur connecté ?) then (Oui)
+else (Non)
+    :Afficher écran de connexion;
+    :Utilisateur saisit identifiants;
+    
+    if (Identifiants valides ?) then (Oui)
+        :Créer session utilisateur;
+    else (Non)
+        :Afficher erreur d'authentification;
+        stop
+    endif
+endif
+
+:Afficher formulaire de signalement;
+:Utilisateur décrit le problème;
+:Envoyer le signalement;
+
+fork
+    :Notifier l'administrateur;
+fork again
+    :Enregistrer le signalement (statut "Ouvert");
+end fork
+
+:Afficher message "Problème signalé";
+stop
+
+@enduml

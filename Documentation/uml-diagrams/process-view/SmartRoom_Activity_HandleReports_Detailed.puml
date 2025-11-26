@@ -1,0 +1,52 @@
+@startuml SmartRoom_Activity_HandleReports_Detailed
+title Activité : Gestion des signalements (Administrateur)
+
+start
+
+:Administrateur se connecte à SmartRoom;
+:Accéder au tableau des signalements;
+:Administrateur sélectionne un signalement à traiter;
+
+if (Signalement valide ?) then (Oui)
+    :Administrateur consulte détails du problème (description, photo, salle, équipement);
+else (Non)
+    :Mettre à jour le statut du signalement (statut "Annulé");
+    :Notifier l'utilisateur ayant fait le signalement;
+    :Clore le signalement;
+    stop
+endif
+
+:Administrateur évalue le problème;
+
+if (Nécessite réparation immédiate ?) then (Oui)
+    :Créer une tâche de réparation;
+else (Non)
+    :Mettre à jour le statut du signalement (statut "En attente");
+    stop
+endif
+
+if (Salle doit être mise indisponible ?) then (Oui)
+    :Administrateur choisit période d'indisponibilité;
+    :Enregistrer l'indisponibilité de la salle;
+
+    if (Réservations en conflit ?) then (Oui)
+        :Annuler les réservations impactées;
+        :Notifier les utilisateurs concernés;
+    else (Non)
+        :Aucune réservation à annuler;
+    endif
+
+else (Non)
+    :La salle reste disponible;
+endif
+
+if (Problème résolu ?) then (Oui)
+    :Mettre à jour le statut du signalement (statut "Résolu");
+    :Notifier l'utilisateur ayant fait le signalement;
+else (Non)
+    :Mettre à jour le statut du signalement (statut "En cours");
+endif
+
+stop
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml SmartRoom_Activity_HandleReports
+title Activité : Gérer un signalement
+
+start
+
+:Consulter les signalements;
+:Sélectionner un signalement;
+
+:Évaluer le problème;
+
+if (Action nécessaire ?) then (Oui)
+    :Mettre à jour le statut du signalement;
+    :Appliquer actions (réparation, indisponibilité, etc.);
+    :Notifier les utilisateurs concernés;
+else (Non)
+    :Clore le signalement;
+endif
+
+stop
+@enduml

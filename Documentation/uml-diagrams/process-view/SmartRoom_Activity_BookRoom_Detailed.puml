@@ -1,0 +1,40 @@
+@startuml SmartRoom_Activity_BookRoom_Detailed
+title Activité : Réserver une salle
+
+start
+
+:Ouvrir l'application SmartRoom;
+:Utilisateur consulte la liste des salles;
+:Afficher les informations et équipements;
+:Utilisateur choisit une date et un créneau;
+:Afficher les disponibilités;
+
+:Utilisateur clique sur "Réserver";
+
+if (Utilisateur connecté ?) then (Oui)
+else (Non)
+    :Afficher écran de connexion;
+    :Utilisateur saisit identifiants;
+    
+    if (Identifiants valides ?) then (Oui)
+        :Créer session utilisateur;
+    else (Non)
+        :Afficher erreur d'authentification;
+        stop
+    endif
+
+endif 
+:Afficher formulaire de réservation;
+:Utilisateur confirme la réservation;
+:Enregistrer la réservation;
+
+fork
+    :Envoyer confirmation mail à l'utilisateur;
+fork again
+    :Mettre à jour le calendrier de la salle;
+end fork
+
+:Afficher message "Réservation confirmée";
+stop
+
+@enduml

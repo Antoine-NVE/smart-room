@@ -6,6 +6,8 @@ réunions et éviter les conflits de réservation, tout en offrant une expérien
 fluide et connectée aux outils de l’entreprise (SSO, calendriers,
 messageries)
 
+Créée par Antoine NAVETTE, Hugo SCHENK et Livia KOLETZKI (+ Frédéric BOUTOU, parti trop tôt.)
+
 ## Architecture
 ### ARCHITECTURAL DRIVERS
 **Fonctionnels**
