@@ -1,0 +1,29 @@
+@startuml SmartRoom_Context_C4.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+LAYOUT_TOP_DOWN()
+
+title SmartRoom — Diagramme C4: Contexte (System Context)
+
+Person(visitor, "Visiteur", "Non connecté — consulte les salles en lecture seule")
+Person(user, "Utilisateur", "Connecté — réserve/annule des salles")
+Person(admin, "Administrateur", "Administration des ressources et des droits")
+
+System_Boundary(s1, "SmartRoom") {
+  System(system, "SmartRoom", "Application de gestion et réservation de salles")
+}
+
+System_Ext(mailSrv, "Serveur de mail (SMTP/Exchange)", "Envoi des e-mails de notification")
+
+' Interactions humaines → système
+Rel(visitor, system, "Consulte")
+Rel(user, system, "S’authentifie, consulte, réserve/annule")
+Rel(admin, system, "Administre ressources, utilisateurs, statistiques")
+
+' SmartRoom → Serveur Mail
+Rel(system, mailSrv, "Envoi d’e-mails de notification", "SMTP/HTTPS")
+
+' Serveur mail → Utilisateurs réels
+Rel(mailSrv, user, "Notifications reçues", "E-mail")
+Rel(mailSrv, admin, "Notifications reçues", "E-mail")
+
+@enduml

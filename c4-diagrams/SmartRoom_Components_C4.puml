@@ -1,0 +1,57 @@
+@startuml SmartRoom_Components_C4.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_TOP_DOWN()
+
+title SmartRoom — Diagramme C4: Composants API & Services
+
+skinparam component<<component_nobg>> {
+  BackgroundColor Transparent
+  BorderColor #555
+  BorderThickness 1
+}
+
+Person(visitor, "Visiteur", "Non connecté — consulte les salles")
+Person(user, "Utilisateur", "Connecté — réserve/annule")
+Person(admin, "Administrateur", "Gère salles, utilisateurs, statistiques")
+Container(web, "Application Web SmartRoom", "SPA React TypeScript", "UI : consultation des salles, authentification, réservation, administration")
+Container_Boundary(api, "API REST SmartRoom") {
+  Component(apiEndpoints, "Endpoints REST", "Node.js TypeScript","Routes HTTP : /auth, /rooms, /reservations, /reports, /stats")
+  Component(authComp, "Module Authentification & Session","Node.js TypeScript","Contrôle d’accès, rôles (Visiteur, Utilisateur, Admin), gestion des sessions et tokens")
+
+  Component(svcBoundary, "Composants Services métier") <<component_nobg>> {
+    Component(resSvc, "Composant Réservation", "Node.js TypeScript","Logique de réservation : création, modification, annulation")
+    Component(roomsSvc, "Composant Gestion des salles", "Node.js TypeScript","Gestion du catalogue, disponibilités, fermetures et ouvertures")
+    Component(incSvc, "Composant Signalements", "Node.js TypeScript","Gestion des signalements : pannes, incidents, problèmes dans les salles")
+    Component(statsSvc, "Composant Statistiques", "Node.js TypeScript","Calcul et consultation des statistiques d’occupation")
+  }
+
+  Component(notifComp, "Composant Notification", "Node.js TypeScript","Prépare les messages et déclenche l’envoi des e-mails")
+}
+
+ComponentDb(db, "SmartRoomDB", "PostgreSQL", "Salles, réservations, signalements, statistiques, utilisateurs, rôles")
+System_Ext(mailSrv, "Serveur de mail (SMTP/Exchange)", "Relais e-mail")
+' ───────────────────────────────
+' Utilisateurs → UI → API
+' ───────────────────────────────
+Rel(visitor, web, "Consulte les salles")
+Rel(user, web, "Consulte, réserve")
+Rel(admin, web, "Administre")
+Rel(web, apiEndpoints, "Appels REST JSON", "HTTPS")
+' ───────────────────────────────
+' API → Auth → Services
+' ───────────────────────────────
+Rel(apiEndpoints, authComp, "Vérifie identité et rôle")
+Rel(apiEndpoints, svcBoundary, "Appels métier vers :\n- Réservation\n- Gestion des salles\n- Signalements\n- Statistiques")
+' ───────────────────────────────
+' Services → Base de données
+' ───────────────────────────────
+Rel(svcBoundary, db, "Lecture / écriture des données métier", "SQL")
+' ───────────────────────────────
+' Services → Notification → Mail
+' ───────────────────────────────
+Rel(svcBoundary, notifComp, "Demande d’envoi de notifications")
+Rel(notifComp, mailSrv, "Envoie les e-mails", "SMTP")
+Rel(mailSrv, user, "Notifications reçues", "E-mail")
+Rel(mailSrv, admin, "Notifications reçues", "E-mail")
+
+@enduml

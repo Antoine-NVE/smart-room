@@ -15,25 +15,32 @@ enum UserRole {
     USER
 }
 
+class Building {
+    +id: number
+    +name: string
+    +address: string
+}
+
+class Floor {
+    +id: number
+    +name: string
+    +level: string
+}
+
 class Room {
     +id: number
     +name: string
-    +building: string
-    +floor: string
     +capacity: number
 }
 
 class RoomResource {
     +id: number
-    +roomId: number
     +name: string
     +quantity: number
 }
 
 class Reservation {
     +id: number
-    +roomId: number
-    +userId: number
     +startDate: Date
     +endDate: Date
     +recurringPatternId: number <<optional>>
@@ -48,8 +55,6 @@ class RecurringPattern {
 
 class IncidentReport {
     +id: number
-    +roomId: number
-    +userId: number
     +message: string
     +status: IncidentStatus <<enum>>
     +createdAt: Date
@@ -64,13 +69,10 @@ enum IncidentStatus {
 
 class FavoriteRoom {
     +id: number
-    +userId: number
-    +roomId: number
 }
 
 class RoomUnavailability {
     +id: number
-    +roomId: number
     +from: Date
     +to: Date
     +reason: string
@@ -82,6 +84,9 @@ User "1" --> "0..*" Reservation : makes >
 Room "1" --> "0..*" Reservation : booked in >
 
 Room "1" --> "0..*" RoomResource : has >
+
+Floor "1" --> "0..*" Room : contains >
+Building "1" --> "0..*" Floor : contains >
 
 User "1" --> "0..*" FavoriteRoom : marks >
 Room "1" --> "0..*" FavoriteRoom : is favorited by >
