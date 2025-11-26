@@ -7,7 +7,8 @@ const start = () => {
         console.log('Server started')
     });
     server.on('error', (err: unknown) => {
-        console.error('Server startup failed: ', err)
+        console.error('Server startup failed:', err)
+        process.exit(1);
     });
 }
 
