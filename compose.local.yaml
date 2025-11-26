@@ -25,3 +25,14 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+
+  database:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smart-room
+    ports:
+      - "${DATABASE_PORT}:5432"
+    volumes:
+      - ./data/database:/var/lib/postgresql
