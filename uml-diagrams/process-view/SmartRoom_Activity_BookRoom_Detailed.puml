@@ -1,5 +1,5 @@
 @startuml SmartRoom_Activity_BookRoom_Detailed
-title Activité : Réserver une salle (SmartRoom)
+title Activité : Réserver une salle
 
 start
 

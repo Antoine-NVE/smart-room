@@ -1,5 +1,5 @@
 @startuml SmartRoom_Activity_ReportIssue_Detailed
-title Activité : Signaler un problème (SmartRoom)
+title Activité : Signaler un problème
 
 start
 

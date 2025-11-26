@@ -1,0 +1,82 @@
+@startuml SmartRoom_UseCase_Kano
+title SmartRoom – Diagramme des cas d'utilisation (Méthode de Kano)
+
+left to right direction
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor White
+    BorderColor #555
+    BorderThickness 1
+}
+
+'=== Palette Kano (vives) ===
+!define K_ESSENTIAL #f08585ff
+!define K_PERFORMANCE #f5cf96ff
+!define K_ATTRACTIVE #85e7c3ff
+!define K_INDIFFERENT #BDBDBD
+!define K_REVERSE #cb7fcfff
+
+'=== Acteurs ===
+actor "Visiteur\n(non connecté)" as Visiteur <<acteur>>
+actor "Utilisateur\n(connecté)" as Utilisateur <<acteur>>
+actor "Administrateur" as Admin <<acteur>>
+actor "Service Mail" as Mail <<acteur>>
+
+Utilisateur --|> Visiteur
+Admin --|> Utilisateur
+
+rectangle "SmartRoom" {
+
+    package "Consultation (Public)" as P_Consult {
+        usecase "Consulter la liste des salles" as UC_Browse K_ESSENTIAL
+        usecase "Rechercher une salle" as UC_Search K_ESSENTIAL
+        usecase "Afficher les disponibilités\n(planning, calendrier)" as UC_Schedule K_ESSENTIAL
+        usecase "Consulter les détails d'une salle\n(capacité, équipements, localisation)" as UC_Detail K_ESSENTIAL
+        usecase "Recommandation de salles par IA" as UC_Recommend K_REVERSE
+    }
+    Visiteur --> P_Consult
+
+    package "Réservations\n[Précondition: Authentification requise]" as P_Resa {
+        usecase "Créer une réservation\nsimple" as UC_BookSimple K_ESSENTIAL
+        usecase "Créer une réservation\nrécurrente" as UC_BookRecur K_PERFORMANCE
+        usecase "Modifier une réservation existante" as UC_EditOwn K_PERFORMANCE
+        usecase "Annuler une réservation" as UC_CancelOwn K_ESSENTIAL
+        usecase "Consulter l’historique\nde ses réservations" as UC_History K_ATTRACTIVE
+        usecase "Ajouter une salle aux favoris" as UC_AddFav K_ATTRACTIVE
+        usecase "Retirer une salle des favoris" as UC_RemoveFav K_ATTRACTIVE
+        usecase "Afficher le nom du réservataire\nd’une salle occupée" as UC_SeeHolder K_ATTRACTIVE
+        usecase "Signaler un problème sur une salle\nou un équipement" as UC_Report K_PERFORMANCE
+        usecase "Choisir un thème d'affichage personnalisé" as UC_CustomTheme K_INDIFFERENT
+    }
+    Utilisateur --> P_Resa
+
+
+    package "Gestion des salles\n" as P_Gest {
+        usecase "Créer une nouvelle salle" as UC_CreateRoom K_PERFORMANCE
+        usecase "Modifier les informations d’une salle" as UC_EditRoom K_PERFORMANCE
+        usecase "Supprimer une salle" as UC_DeleteRoom K_PERFORMANCE
+        usecase "Rendre une salle indisponible\n(travaux, maintenance)" as UC_Block K_ESSENTIAL
+        usecase "Rendre une salle disponible à nouveau" as UC_Unblock K_ESSENTIAL
+        usecase "Consulter toutes les réservations" as UC_ViewAll K_ESSENTIAL
+        usecase "Modifier ou annuler une réservation\nquelconque" as UC_AdminEdit K_PERFORMANCE
+        usecase "Consulter les signalements reçus" as UC_ViewReports K_ESSENTIAL
+        usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports K_ESSENTIAL
+        usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats K_ATTRACTIVE
+        usecase "Ajouter, modifier ou supprimer\ndes équipements" as UC_ManageEquip K_PERFORMANCE
+        usecase "Réattribuer une réservation à un autre utilisateur" as UC_ReassignReservation K_REVERSE
+    }
+    Admin --> P_Gest
+
+    '=== Notifications automatiques ===
+    usecase "Notifier par e-mail\n(confirmation, modification, annulation,\nindisponibilité, signalement)" as UC_Email K_PERFORMANCE
+    Mail <-- UC_Email
+
+    UC_BookSimple ..> UC_Email : <<inclut>>
+    UC_BookRecur  ..> UC_Email : <<inclut>>
+    UC_EditOwn    ..> UC_Email : <<inclut>>
+    UC_CancelOwn  ..> UC_Email : <<inclut>>
+    UC_Block      ..> UC_Email : <<inclut>>\n(annulations automatiques)
+    UC_Report     ..> UC_Email : <<inclut>>\n(notification administrateur)
+}
+
+@enduml

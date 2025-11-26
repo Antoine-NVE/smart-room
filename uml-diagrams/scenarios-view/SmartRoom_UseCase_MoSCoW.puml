@@ -1,0 +1,78 @@
+@startuml SmartRoom_UseCase_MoSCoW
+title SmartRoom – Diagramme des cas d'utilisation (Méthode MoSCoW)
+
+left to right direction
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor White
+  BorderColor #555
+  BorderThickness 1
+}
+
+'=== Palette MoSCoW ===
+!define MUST_COLOR #CFE2FF
+!define SHOULD_COLOR #FFE082
+!define COULD_COLOR #D1E7DD
+!define WONT_COLOR #F8D7DA
+
+'=== Acteurs ===
+actor "Visiteur\n(non connecté)" as Visiteur <<acteur>>
+actor "Utilisateur\n(connecté)" as Utilisateur <<acteur>>
+actor "Administrateur" as Admin <<acteur>>
+actor "Service Mail" as Mail <<acteur>>
+
+Utilisateur --|> Visiteur
+Admin --|> Utilisateur
+
+rectangle "SmartRoom" {
+
+  package "Consultation (Public)" as P_Consult {
+    usecase "Consulter la liste des salles" as UC_Browse MUST_COLOR
+    usecase "Rechercher une salle" as UC_Search MUST_COLOR
+    usecase "Afficher les disponibilités\n(planning, calendrier)" as UC_Schedule MUST_COLOR
+    usecase "Consulter les détails d'une salle\n(capacité, équipements, localisation)" as UC_Detail MUST_COLOR
+  }
+  Visiteur --> P_Consult
+
+  package "Réservations\n[Précondition: Authentification requise]" as P_Resa {
+    usecase "Créer une réservation\nsimple" as UC_BookSimple MUST_COLOR
+    usecase "Créer une réservation\nrécurrente" as UC_BookRecur SHOULD_COLOR
+    usecase "Modifier une réservation existante" as UC_EditOwn SHOULD_COLOR
+    usecase "Annuler une réservation" as UC_CancelOwn MUST_COLOR
+    usecase "Consulter l’historique\nde ses réservations" as UC_History COULD_COLOR
+    usecase "Ajouter une salle aux favoris" as UC_AddFav COULD_COLOR
+    usecase "Retirer une salle des favoris" as UC_RemoveFav COULD_COLOR
+    usecase "Afficher le nom du réservataire\nd’une salle occupée" as UC_SeeHolder COULD_COLOR
+    usecase "Signaler un problème sur une salle\nou un équipement" as UC_Report SHOULD_COLOR
+  }
+    Utilisateur --> P_Resa
+  
+
+  package "Gestion des salles\n" as P_Gest {
+    usecase "Créer une nouvelle salle" as UC_CreateRoom SHOULD_COLOR
+    usecase "Modifier les informations d’une salle" as UC_EditRoom SHOULD_COLOR
+    usecase "Supprimer une salle" as UC_DeleteRoom SHOULD_COLOR
+    usecase "Rendre une salle indisponible\n(travaux, maintenance)" as UC_Block MUST_COLOR
+    usecase "Rendre une salle disponible à nouveau" as UC_Unblock MUST_COLOR
+    usecase "Consulter toutes les réservations" as UC_ViewAll MUST_COLOR
+    usecase "Modifier ou annuler une réservation\nquelconque" as UC_AdminEdit SHOULD_COLOR
+    usecase "Consulter les signalements reçus" as UC_ViewReports MUST_COLOR
+    usecase "Mettre à jour l’état d’un signalement\n(en cours / traité)" as UC_HandleReports MUST_COLOR
+    usecase "Consulter les statistiques\nd’occupation des salles" as UC_Stats COULD_COLOR
+    usecase "Ajouter, modifier ou supprimer\ndes équipements" as UC_ManageEquip SHOULD_COLOR
+  }
+  Admin --> P_Gest
+
+  '=== Notifications automatiques ===
+  usecase "Notifier par e-mail\n(confirmation, modification, annulation,\nindisponibilité, signalement)" as UC_Email SHOULD_COLOR
+  Mail <-- UC_Email
+
+  UC_BookSimple ..> UC_Email : <<inclut>>
+  UC_BookRecur  ..> UC_Email : <<inclut>>
+  UC_EditOwn    ..> UC_Email : <<inclut>>
+  UC_CancelOwn  ..> UC_Email : <<inclut>>
+  UC_Block      ..> UC_Email : <<inclut>>\n(annulations automatiques)
+  UC_Report     ..> UC_Email : <<inclut>>\n(notification administrateur)
+}
+
+@enduml
