@@ -1,5 +1,6 @@
 import express, {NextFunction, Request, Response} from 'express';
 import {corsMiddleware} from "./middlewares/cors";
+import cookieParser from "cookie-parser"
 
 export const createServer = () => {
     const app = express();
@@ -7,6 +8,7 @@ export const createServer = () => {
     app.use(corsMiddleware);
 
     app.use(express.json());
+    app.use(cookieParser())
 
     app.use('/', (req: Request, res: Response) => {
         res.status(200).send('OK');
