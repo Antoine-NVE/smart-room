@@ -40,7 +40,7 @@ const start = async () => {
         logger.info('Server started');
     });
     server.on('error', (err: unknown) => {
-        exit(logger, 'Server startup', err);
+        stop(logger, 'Server startup', err);
     });
 };
 
@@ -52,11 +52,11 @@ const step = async <T>(
     try {
         return await fn();
     } catch (err) {
-        return exit(logger, name, err);
+        return stop(logger, name, err);
     }
 };
 
-const exit = (logger: Logger, stepName: string, err: unknown) => {
+const stop = (logger: Logger, stepName: string, err: unknown) => {
     logger.fatal({ err }, `${stepName} failed`);
     process.exit(1);
 };
