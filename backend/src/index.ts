@@ -3,6 +3,7 @@ import { loadEnv } from './infrastructure/env';
 import { buildContainer } from './infrastructure/container';
 import { createLogger } from './infrastructure/logger';
 import { Logger } from 'pino';
+import { connectToDb } from './infrastructure/db';
 
 const start = async () => {
     const logger = createLogger(
@@ -15,7 +16,14 @@ const start = async () => {
         return env;
     });
 
-    // TODO: connect to DB
+    const db = await step('Database connection', logger, async () => {
+        const db = connectToDb({
+            user: env.DB_USER,
+            password: env.DB_PASSWORD,
+        });
+        logger.info('Database connected');
+        return db;
+    });
 
     const container = await step('Container build', logger, async () => {
         const container = buildContainer();
