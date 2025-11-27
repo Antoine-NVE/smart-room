@@ -31,7 +31,10 @@ const start = async () => {
         return container;
     });
 
-    const app = createApp(env);
+    const app = createApp({
+        allowedOrigins: env.ALLOWED_ORIGINS,
+        nodeEnv: env.NODE_ENV,
+    });
     const server = app.listen(3000);
     server.on('listening', () => {
         logger.info('Server started');

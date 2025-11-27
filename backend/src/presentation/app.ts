@@ -5,10 +5,16 @@ import { HttpError } from '../infrastructure/errors/http-error';
 import { createCorsMiddleware } from './middlewares/cors';
 import { Env } from '../infrastructure/env';
 
-export const createApp = (env: Env) => {
+export const createApp = ({
+    allowedOrigins,
+    nodeEnv,
+}: {
+    allowedOrigins: Env['ALLOWED_ORIGINS'];
+    nodeEnv: Env['NODE_ENV'];
+}) => {
     const app = express();
 
-    app.use(createCorsMiddleware(env.ALLOWED_ORIGINS));
+    app.use(createCorsMiddleware(allowedOrigins));
 
     app.use(express.json());
     app.use(cookieParser());
