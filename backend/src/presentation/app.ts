@@ -5,7 +5,7 @@ import { HttpError } from '../infrastructure/errors/http-error';
 import { createCorsMiddleware } from './middlewares/cors';
 import { Env } from '../infrastructure/env';
 
-export const createServer = (env: Env) => {
+export const createApp = (env: Env) => {
     const app = express();
 
     app.use(createCorsMiddleware(env.ALLOWED_ORIGINS));

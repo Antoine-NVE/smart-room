@@ -1,4 +1,4 @@
-import { createServer } from './presentation/server';
+import { createApp } from './presentation/app';
 import { loadEnv } from './infrastructure/env';
 import { buildContainer } from './infrastructure/container';
 import { createLogger } from './infrastructure/logger';
@@ -23,7 +23,7 @@ const start = async () => {
         return container;
     });
 
-    const app = createServer(env);
+    const app = createApp(env);
     const server = app.listen(3000);
     server.on('listening', () => {
         logger.info('Server started');
