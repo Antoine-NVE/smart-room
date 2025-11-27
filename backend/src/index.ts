@@ -17,7 +17,7 @@ const start = async () => {
     });
 
     const db = await step('Database connection', logger, async () => {
-        const db = connectToDb({
+        const db = await connectToDb({
             user: env.DB_USER,
             password: env.DB_PASSWORD,
         });
