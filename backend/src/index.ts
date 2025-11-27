@@ -10,7 +10,7 @@ const start = () => {
 
     const container = buildContainer();
 
-    const app = createServer();
+    const app = createServer(env);
     const server = app.listen(3000);
     server.on('listening', () => {
         console.log('Server started');

@@ -5,7 +5,7 @@ const envSchema = z.object({
     ALLOWED_ORIGINS: z.array(z.url()),
 });
 
-export type Env = z.infer<typeof envSchema>;
+export type Env = ReturnType<typeof loadEnv>;
 
 export const loadEnv = () => {
     return envSchema.parse({

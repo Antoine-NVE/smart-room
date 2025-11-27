@@ -1,13 +1,14 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { corsMiddleware } from './middlewares/cors';
 import cookieParser from 'cookie-parser';
 import { NotFoundError } from '../infrastructure/errors/not-found-error';
 import { HttpError } from '../infrastructure/errors/http-error';
+import { createCorsMiddleware } from './middlewares/cors';
+import { Env } from '../infrastructure/env';
 
-export const createServer = () => {
+export const createServer = (env: Env) => {
     const app = express();
 
-    app.use(corsMiddleware);
+    app.use(createCorsMiddleware(env.ALLOWED_ORIGINS));
 
     app.use(express.json());
     app.use(cookieParser());
