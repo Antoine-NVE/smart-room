@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { NotFoundError } from '../infrastructure/errors/not-found-error';
 import { HttpError } from '../infrastructure/errors/http-error';
-import { createCorsMiddleware } from './middlewares/cors';
+import { createCorsMiddleware } from './middlewares/technical/cors';
 import { Env } from '../infrastructure/env';
 
 export const createApp = ({
