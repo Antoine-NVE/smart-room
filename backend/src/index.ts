@@ -1,19 +1,64 @@
-import { createServer } from './presentation/server';
+import { createApp } from './presentation/app';
 import { loadEnv } from './infrastructure/env';
+import { buildContainer } from './infrastructure/container';
+import { createLogger } from './infrastructure/logger';
+import { Logger } from 'pino';
+import { connectToDb } from './infrastructure/db';
 
-const start = () => {
-    const env = loadEnv();
-    console.log('Environment validated');
+const start = async () => {
+    const logger = createLogger(
+        process.env.NODE_ENV === 'development' ? 'development' : 'production',
+    );
 
-    const app = createServer();
+    const env = await step('Environment validation', logger, async () => {
+        const env = loadEnv();
+        logger.info('Environment validated');
+        return env;
+    });
+
+    const db = await step('Database connection', logger, async () => {
+        const db = await connectToDb({
+            user: env.DB_USER,
+            password: env.DB_PASSWORD,
+        });
+        logger.info('Database connected');
+        return db;
+    });
+
+    const container = await step('Container build', logger, async () => {
+        const container = buildContainer();
+        logger.info('Container built');
+        return container;
+    });
+
+    const app = createApp({
+        allowedOrigins: env.ALLOWED_ORIGINS,
+        nodeEnv: env.NODE_ENV,
+    });
     const server = app.listen(3000);
     server.on('listening', () => {
-        console.log('Server started');
+        logger.info('Server started');
     });
     server.on('error', (err: unknown) => {
-        console.error('Server startup failed:', err);
-        process.exit(1);
+        exit(logger, 'Server startup', err);
     });
 };
 
-start();
+const step = async <T>(
+    name: string,
+    logger: Logger,
+    fn: () => Promise<T>,
+): Promise<T> => {
+    try {
+        return await fn();
+    } catch (err) {
+        return exit(logger, name, err);
+    }
+};
+
+const exit = (logger: Logger, stepName: string, err: unknown) => {
+    logger.fatal({ err }, `${stepName} failed`);
+    process.exit(1);
+};
+
+start().then();
