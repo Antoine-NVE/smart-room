@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { Env } from './env';
 
-export const connectToDb = async ({
+export const connectToPostgres = async ({
     user,
     password,
 }: {

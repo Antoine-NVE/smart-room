@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { NotFoundError } from '../infrastructure/errors/not-found-error';
 import { HttpError } from '../infrastructure/errors/http-error';
-import { createCorsMiddleware } from './middlewares/technical/cors';
+import { createCors } from './middlewares/technical/cors';
 import { Env } from '../infrastructure/env';
 
 export const createApp = ({
@@ -14,7 +14,7 @@ export const createApp = ({
 }) => {
     const app = express();
 
-    app.use(createCorsMiddleware(allowedOrigins));
+    app.use(createCors(allowedOrigins));
 
     app.use(express.json());
     app.use(cookieParser());
