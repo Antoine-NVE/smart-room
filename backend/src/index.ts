@@ -3,7 +3,7 @@ import { loadEnv } from './infrastructure/env';
 import { buildContainer } from './infrastructure/container';
 import { createLogger } from './infrastructure/logger';
 import { Logger } from 'pino';
-import { connectToDb } from './infrastructure/db';
+import { connectToPostgres } from './infrastructure/postgres';
 
 const start = async () => {
     const logger = createLogger(
@@ -16,20 +16,16 @@ const start = async () => {
         return env;
     });
 
-    const db = await step('Database connection', logger, async () => {
-        const db = await connectToDb({
+    const postgresPool = await step('Postgres connection', logger, async () => {
+        const pool = await connectToPostgres({
             user: env.DB_USER,
             password: env.DB_PASSWORD,
         });
-        logger.info('Database connected');
-        return db;
+        logger.info('Postgres connected');
+        return pool;
     });
 
-    const container = await step('Container build', logger, async () => {
-        const container = buildContainer();
-        logger.info('Container built');
-        return container;
-    });
+    const container = buildContainer();
 
     const app = createApp({
         allowedOrigins: env.ALLOWED_ORIGINS,

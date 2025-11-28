@@ -7,7 +7,7 @@ const envSchema = z.object({
     DB_PASSWORD: z.string(),
 });
 
-export type Env = ReturnType<typeof loadEnv>;
+export type Env = z.infer<typeof envSchema>;
 
 export const loadEnv = () => {
     const { NODE_ENV, ALLOWED_ORIGINS, DB_USER, DB_PASSWORD } = process.env;
