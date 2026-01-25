@@ -2,18 +2,18 @@
     "name": "backend",
     "version": "1.0.0",
     "description": "",
-    "main": "./dist/src/index.js",
+    "main": "dist/index.js",
     "scripts": {
-        "dev": "tsx watch ./src/index.ts",
-        "build": "rimraf ./dist && tsc",
+        "dev": "tsx watch src/index.ts",
+        "build": "rimraf dist && tsc",
         "start": "node .",
-        "format": "prettier --write ./",
-        "format:check": "prettier --check ./"
+        "format:write": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "type": "commonjs",
+    "type": "module",
     "devDependencies": {
         "@types/cookie-parser": "^1.4.10",
         "@types/cors": "^2.8.19",
