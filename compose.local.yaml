@@ -4,10 +4,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.local
     env_file:
-      - ./frontend/.env
+      - path: ./frontend/.env.example
+        required: true
+      - path: ./frontend/.env
+        required: false
     ports:
-      - "${FRONTEND_DEV_PORT}:5173"
-      - "${FRONTEND_PREVIEW_PORT}:4173"
+      - "${FRONTEND_PORT}:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -19,7 +21,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile.local
     env_file:
-      - ./backend/.env
+      - path: ./backend/.env.example
+        required: true
+      - path: ./backend/.env
+        required: false
     ports:
       - "${BACKEND_PORT}:3000"
     volumes:
@@ -31,8 +36,8 @@ services:
   database:
     image: postgres:18
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: smart-room
     volumes:
       - database:/var/lib/postgresql
@@ -42,7 +47,7 @@ services:
     image: dpage/pgadmin4:9
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - "${PGADMIN_PORT}:80"
     volumes:
