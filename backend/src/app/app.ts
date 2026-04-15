@@ -1,11 +1,18 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import cookieParser from 'cookie-parser';
-import { corsMiddleware } from './middlewares/cors.js';
+import cors from 'cors';
+import type { Env } from '../config/env.js';
+import type { Logger } from 'pino';
 
-export const createHttpApp = ({ allowedOrigins }: { allowedOrigins: string[] }) => {
+export const createApp = (allowedOrigins: Env['allowedOrigins'], logger: Logger) => {
     const app = express();
 
-    app.use(corsMiddleware({ allowedOrigins }));
+    app.use(
+        cors({
+            origin: allowedOrigins,
+            credentials: true,
+        }),
+    );
 
     app.use(express.json());
     app.use(cookieParser());
@@ -18,8 +25,10 @@ export const createHttpApp = ({ allowedOrigins }: { allowedOrigins: string[] }) 
     });
 
     // Error handler
-    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-        res.json(err);
+    app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+        logger.error(err instanceof Error ? err.message : 'Unknown error');
+
+        res.status(500).json({ success: false, message: 'Internal server error' });
     });
 
     return app;

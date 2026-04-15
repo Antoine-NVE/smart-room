@@ -1,24 +1,16 @@
 import type { Express } from 'express';
-import { Server } from 'node:http';
-import type { Result } from '../core/types/result.js';
-import { fail, ok } from '../core/utils/result.js';
+import type { Env } from '../config/env.js';
 
-export const startServer = ({
-    app,
-    port,
-}: {
-    app: Express;
-    port: number;
-}): Promise<Result<{ server: Server }, unknown>> => {
-    return new Promise((resolve) => {
+export const startServer = (app: Express, port: Env['port']) => {
+    return new Promise((resolve, reject) => {
         const server = app.listen(port);
 
         server.on('listening', () => {
-            resolve(ok({ server }));
+            resolve(server);
         });
 
         server.on('error', (err: unknown) => {
-            resolve(fail(err));
+            reject(err);
         });
     });
 };
