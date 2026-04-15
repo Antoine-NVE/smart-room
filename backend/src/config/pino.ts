@@ -1,6 +1,7 @@
-import pino, { type BaseLogger } from 'pino';
+import pino from 'pino';
+import type { Env } from './env.js';
 
-export const createBaseLogger = ({ nodeEnv }: { nodeEnv: 'development' | 'production' }): BaseLogger => {
+export const createLogger = (nodeEnv: Env['nodeEnv']) => {
     const isDev = nodeEnv === 'development';
 
     return pino({
